@@ -16,7 +16,7 @@ I also want to built a editor to place game objects in a scene, this will
   
 ## Usage
 
-Simple "Hello, World" example.
+Simple example with incrementing state.
 
 ```toml
 [dependencies]
@@ -26,18 +26,33 @@ abyss_engine = { git = "https://github.com/HurricaneInteractive/abyss_engine", b
 
 ```rust
 use raylib::prelude::*;
-use abyss_engine::{Core};
+use abyss_engine::core::{Core};
+use abyss_engine::transform::{TransformConfig};
+use abyss_engine::traits::ToProperty;
+
+struct GameState {
+    pub count: i32
+}
 
 fn main() {
-    // Initialises raylib
-    // This will read the config files for screen size, fullscreen etc settings 
-    let mut core: Core = Core::init();
+    let mut state = GameState {
+        count: 0
+    };
 
-    while !&core.rl.window_should_close() {
-        let mut d = &mut core.rl.begin_drawing(&core.thread);
+    TransformConfig::generate();
 
-        d.clear_background(Color::WHITE);
-        d.draw_text("Hello, world!", 12, 12, 20, Color::BLACK);
+    Core::init()
+        .game_loop(&mut state, logic);
+}
+
+fn logic(core: &mut Core, state: &mut GameState) {
+    let d = &mut core.rl.begin_drawing(&core.thread);
+
+    if d.is_mouse_button_pressed(raylib::consts::MouseButton::MOUSE_LEFT_BUTTON) {
+        state.count += 1;
     }
+
+    d.clear_background(Color::WHITE);
+    d.draw_text(&state.count.to_string(), 12, 12, 20, Color::BLACK);
 }
 ```

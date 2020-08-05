@@ -1,0 +1,7 @@
+name: "Player"
+id: "1234-1234-1234-1234"
+entity_type: "player"
+transform:
+  postition:
+    x: 0.0
+    y: 0.0
