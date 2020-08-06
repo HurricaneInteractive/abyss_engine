@@ -1,17 +1,16 @@
-use serde::{Deserialize, Serialize};
-use crate::config::{ReadConfig, generate_struct_yml};
+use crate::config::{generate_struct_yml, ReadConfig};
 use crate::math::Vec2;
 use crate::traits::ToProperty;
-use std::ptr::null;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Copy, Clone, Deserialize, Serialize)]
 pub struct Transform {
-    pub position: Vec2
+    pub position: Vec2,
 }
 
 #[derive(Deserialize, Serialize)]
 pub struct TransformConfig {
-    transform: Transform
+    transform: Transform,
 }
 
 impl ReadConfig<Transform> for Transform {
@@ -25,14 +24,11 @@ impl ToProperty for TransformConfig {
     fn generate() -> Result<(), Box<dyn std::error::Error>> {
         let t = TransformConfig {
             transform: Transform {
-                position: Vec2 {
-                    x: 0.0,
-                    y: 0.0
-                }
-            }
+                position: Vec2 { x: 0.0, y: 0.0 },
+            },
         };
 
-        generate_struct_yml("./transform-config.yml", &t)?;
+        generate_struct_yml(".core/transform-config.yml", &t)?;
 
         Ok(())
     }
