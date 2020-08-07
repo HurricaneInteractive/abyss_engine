@@ -16,6 +16,10 @@ I also want to built a editor to place game objects in a scene, this will
   
 ## Usage
 
+> Currently the library is evolving quickly, this example is kinda pointless
+> and will need to be changed constantly. Once the library is more stable I
+> will add a example to the repo.
+
 Simple example with incrementing state.
 
 ```toml
@@ -27,22 +31,22 @@ abyss_engine = { git = "https://github.com/HurricaneInteractive/abyss_engine", b
 ```rust
 use raylib::prelude::*;
 use abyss_engine::core::{Core};
-use abyss_engine::transform::{TransformConfig};
-use abyss_engine::traits::ToProperty;
 
 struct GameState {
     pub count: i32
 }
 
 fn main() {
-    let mut state = GameState {
-        count: 0
-    };
-
-    TransformConfig::generate();
-
     Core::init()
-        .game_loop(&mut state, logic);
+        .game_loop(|mut core| {
+            let mut state = GameState {
+                count: 0
+            };
+
+            while !&core.rl.window_should_close() {
+                logic(&mut core, &mut state);
+            }
+        })
 }
 
 fn logic(core: &mut Core, state: &mut GameState) {
