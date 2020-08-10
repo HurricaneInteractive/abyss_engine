@@ -50,6 +50,16 @@ impl Mapping {
         );
     }
 
+    fn get_scene_file(scene: &str) -> std::io::Result<File> {
+        let mut scene_path = Core::get_game_folder();
+        scene_path.push(SCENE_FOLDER);
+        scene_path.push(format!("{}.txt", scene));
+
+        let file = File::open(scene_path)?;
+
+        Ok(file)
+    }
+
     /// render hashmap as sprites with the ability to ignore items
     pub fn render_scene(
         mut d: &mut RaylibDrawHandle,
@@ -57,11 +67,7 @@ impl Mapping {
         mapping: &LoadedHashMap,
         grid_size: &i32,
     ) -> std::io::Result<()> {
-        let mut scene_path = Core::get_game_folder();
-        scene_path.push(SCENE_FOLDER);
-        scene_path.push(format!("{}.txt", scene));
-
-        let file = File::open(scene_path)?;
+        let file = Mapping::get_scene_file(&scene)?;
         let reader = BufReader::new(file);
         let mut character_storage: HashMap<char, &Texture2D> = HashMap::new();
 
@@ -122,8 +128,26 @@ impl Mapping {
     }
 
     /// find instances of a character and returns the row,col
-    pub fn find_character_positions(_c: char) -> Vec<(i32, i32)> {
-        Vec::new()
+    pub fn find_character_positions(
+        scene: &str,
+        lookFor: &char,
+    ) -> Result<Vec<(i32, i32)>, Vec<(i32, i32)>> {
+        let file = Mapping::get_scene_file(&scene).unwrap();
+        let mut pos: Vec<(i32, i32)> = Vec::new();
+        let reader = BufReader::new(file);
+
+        for (row, line) in reader.lines().into_iter().enumerate() {
+            let unwrapped = line.unwrap();
+            let chars: Vec<char> = unwrapped.chars().collect();
+
+            for (col, c) in chars.iter().enumerate() {
+                if c == lookFor {
+                    pos.push((row as i32, col as i32));
+                }
+            }
+        }
+
+        Ok(pos)
     }
 
     /// translates a row, col into a world position
