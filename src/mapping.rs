@@ -130,7 +130,7 @@ impl Mapping {
     /// find instances of a character and returns the row,col
     pub fn find_character_positions(
         scene: &str,
-        lookFor: &char,
+        look_for: &char,
     ) -> Result<Vec<(i32, i32)>, Vec<(i32, i32)>> {
         let file = Mapping::get_scene_file(&scene).unwrap();
         let mut pos: Vec<(i32, i32)> = Vec::new();
@@ -141,7 +141,7 @@ impl Mapping {
             let chars: Vec<char> = unwrapped.chars().collect();
 
             for (col, c) in chars.iter().enumerate() {
-                if c == lookFor {
+                if c == look_for {
                     pos.push((row as i32, col as i32));
                 }
             }
